@@ -342,6 +342,7 @@ X = pd.get_dummies(X)
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.33, random_state=80
 )
+
 # %% 8.2 Decision Tree
 from sklearn.tree import DecisionTreeRegressor  # noqa: E402
 
@@ -365,3 +366,142 @@ data = {"true": y_test_b, "pred": y_pred_b}
 results = pd.DataFrame(data)
 
 results.plot(figsize=(20, 10), kind="scatter", x="true", y="pred")
+
+# %% 8.3 Random Forest
+
+from sklearn.ensemble import RandomForestRegressor  # noqa: E402
+
+model = RandomForestRegressor()
+model.fit(X_train, y_train)
+
+# %% Cell 44
+
+model_at_hand = model
+
+y_pred = model_at_hand.predict(X_test)
+
+from sklearn.metrics import mean_absolute_error  # noqa: E402
+from sklearn.metrics import mean_squared_error  # noqa: E402
+from sklearn.metrics import r2_score  # noqa: E402
+
+print("mean absolute error", mean_absolute_error(y_test, y_pred))
+print("mean squared error", mean_squared_error(y_test, y_pred))
+print("root mean squared error", np.sqrt(mean_squared_error(y_test, y_pred)))
+print("r2", r2_score(y_test, y_pred))
+
+# %% Cell 45
+data = {"true": y_test_b, "pred": y_pred_b}
+results = pd.DataFrame(data)
+
+results.plot(figsize=(20, 10), kind="scatter", x="true", y="pred")
+
+# %% 8.4 Gradient Boosting
+
+from sklearn.ensemble import HistGradientBoostingRegressor  # noqa: E402
+
+model = HistGradientBoostingRegressor()
+model.fit(X_train, y_train)
+
+# %% Cell 47
+
+model_at_hand = model
+
+y_pred = model_at_hand.predict(X_test)
+
+from sklearn.metrics import mean_absolute_error  # noqa: E402
+from sklearn.metrics import mean_squared_error  # noqa: E402
+from sklearn.metrics import r2_score  # noqa: E402
+
+print("mean absolute error", mean_absolute_error(y_test, y_pred))
+print("mean squared error", mean_squared_error(y_test, y_pred))
+print("root mean squared error", np.sqrt(mean_squared_error(y_test, y_pred)))
+print("r2", r2_score(y_test, y_pred))
+
+# %% Cell 48
+data = {"true": y_test_b, "pred": y_pred_b}
+results = pd.DataFrame(data)
+
+results.plot(figsize=(20, 10), kind="scatter", x="true", y="pred")
+
+# %% 8.5 Comparing Algorithm Performances
+
+print("=" * 60)
+print(f"{'Algorithm':<25} {'MAE':>10} {'RMSE':>10} {'R2':>10}")
+print("-" * 60)
+print(f"{'Benchmark Model':<25} {12.61:>10.2f} {18.90:>10.2f} {0.23:>10.2f}")
+print(f"{'Decision Tree':<25} {10.78:>10.2f} {17.64:>10.2f} {0.36:>10.2f}")
+print(f"{'Random Forest':<25} {9.82:>10.2f} {17.04:>10.2f} {0.40:>10.2f}")
+print(f"{'Hist Gradient Boosting':<25} {9.64:>10.2f} {15.99:>10.2f} {0.47:>10.2f}")
+print("=" * 60)
+
+# %% 9. Tuning
+# %% 9.1 Find Best Parameters
+# Will do these. They take time!
+
+# %% 10. Classification
+# Yes, we will turn this into a classification problem
+data_with_new_features["total_amount"].hist(bins=100, figsize=(10, 5))
+
+# %% Cell 53
+
+nyc_class = data_with_new_features.copy()
+# a 20 split point is good enough!
+nyc_class["earning_class"] = data_with_new_features["total_amount"].apply(
+    lambda x: "low" if x <= 25 else "high"
+)
+nyc_class["earning_class_binary"] = nyc_class["earning_class"].apply(
+    lambda x: 0 if x == "low" else 1
+)
+nyc_class.head()
+
+
+# %% Cell 54
+
+nyc_class["earning_class"].value_counts()
+# %% Cell 55
+
+categorical_features = [
+    "PULocationID",
+    "transaction_month",
+    "transaction_day",
+    "transaction_hour",
+    "transaction_week_day",
+    "weekend",
+    "is_holiday",
+    "Borough",
+]
+input_features = categorical_features
+target_feature = "earning_class_binary"
+
+# %% Cell 56
+
+from sklearn.model_selection import train_test_split  # noqa: E402
+
+X_c = nyc_class[input_features]
+y_c = nyc_class[target_feature]
+
+# one-hot encode
+X_c = pd.get_dummies(X_c)
+
+X_train_c, X_test_c, y_train_c, y_test_c = train_test_split(
+    X_c, y_c, test_size=0.33, random_state=100
+)
+
+# %% Cell 57
+from sklearn.ensemble import RandomForestClassifier  # noqa: E402
+
+clf = RandomForestClassifier()
+clf.fit(X_train_c, y_train_c)
+
+# %% Cell 58
+
+from sklearn.metrics import accuracy_score  # noqa: E402
+from sklearn.metrics import precision_score, recall_score  # noqa: E402
+from sklearn.metrics import confusion_matrix  # noqa: E402
+
+y_pred_c = clf.predict(X_test_c)
+
+print(confusion_matrix(y_test_c, y_pred_c))
+print("accuracy", accuracy_score(y_test_c, y_pred_c))
+print("precision", precision_score(y_test_c, y_pred_c))
+print("recall", recall_score(y_test_c, y_pred_c))
