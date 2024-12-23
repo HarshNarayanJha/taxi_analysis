@@ -209,7 +209,7 @@ nyc_class["earning_class_binary"] = nyc_class["earning_class"].apply(lambda x: 0
 
 We used the `total_amount` histogram for finding the appropriate split point.
 
-![Total Amount Histogram](images/total_amount_hist.png)
+![Total Amount Histogram](images/total_amount_dist.png)
 
 $25 results in a very even split
 
