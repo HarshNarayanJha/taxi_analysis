@@ -345,7 +345,6 @@ X_train, X_test, y_train, y_test = train_test_split(
 )
 
 
-
 # %% 8.2 Decision Tree
 from sklearn.tree import DecisionTreeRegressor  # noqa: E402
 
@@ -515,6 +514,7 @@ print(confusion_matrix(y_test_c, y_pred_c))
 print("accuracy", accuracy_score(y_test_c, y_pred_c))
 print("precision", precision_score(y_test_c, y_pred_c))
 print("recall", recall_score(y_test_c, y_pred_c))
+
 # %% Save Classification Model
 
 import pickle  # noqa: E402
