@@ -50,16 +50,16 @@ taxi_data[taxi_data["total_amount"] < 0].reset_index().plot(
 
 # %% Cell 9
 print(taxi_data[taxi_data["total_amount"] < 0].head())
-print(taxi_data[taxi_data["total_amount"] < 0]["payment_type"].value_counts())
-taxi_data[taxi_data["total_amount"] < 0]["trip_distance"].hist(figsize=(10, 5), bins=60)
+print(taxi_data[taxi_data["total_amount"] < 0]["payment_type"].value_counts())  # type: ignore
+taxi_data[taxi_data["total_amount"] < 0]["trip_distance"].hist(figsize=(10, 5), bins=60)  # type: ignore
 
 ### Since most of the -ve fared trips are of type 3 and 4 (No Charge and Dispute) and of trip_distance 0, we can safely ignore them.
 
 # %% Cell 10
 print(taxi_data[taxi_data["total_amount"] == 0].shape)
 print(taxi_data[taxi_data["total_amount"] == 0].head())
-print(taxi_data[taxi_data["total_amount"] == 0]["payment_type"].value_counts())
-taxi_data[taxi_data["total_amount"] == 0]["trip_distance"].hist(
+print(taxi_data[taxi_data["total_amount"] == 0]["payment_type"].value_counts())  # type: ignore
+taxi_data[taxi_data["total_amount"] == 0]["trip_distance"].hist(  # type: ignore
     figsize=(10, 5), bins=60
 )
 taxi_data[taxi_data["total_amount"] == 0].reset_index().plot(
@@ -124,20 +124,20 @@ print(taxi_data_prepared.dtypes)
 # we transform values into formats we need
 
 taxi_data_prepared["transaction_date"] = pd.to_datetime(
-    taxi_data_prepared["tpep_pickup_datetime"].dt.date
+    taxi_data_prepared["tpep_pickup_datetime"].dt.date  # type: ignore
 )
 taxi_data_prepared["transaction_year"] = taxi_data_prepared[
     "tpep_pickup_datetime"
-].dt.year
+].dt.year  # type: ignore
 taxi_data_prepared["transaction_month"] = taxi_data_prepared[
     "tpep_pickup_datetime"
-].dt.month
+].dt.month  # type: ignore
 taxi_data_prepared["transaction_day"] = taxi_data_prepared[
     "tpep_pickup_datetime"
-].dt.day
+].dt.day  # type: ignore
 taxi_data_prepared["transaction_hour"] = taxi_data_prepared[
     "tpep_pickup_datetime"
-].dt.hour
+].dt.hour  # type: ignore
 
 taxi_data_prepared.head()
 taxi_data_prepared.hist(figsize=(20, 10), bins=60)
@@ -280,7 +280,7 @@ data_with_new_features["weekend"] = data_with_new_features[
 from pandas.tseries.holiday import USFederalHolidayCalendar  # noqa: E402
 
 cal = USFederalHolidayCalendar()
-holidays = pd.to_datetime(cal.holidays(start="2024", end="2025").date)
+holidays = pd.to_datetime(cal.holidays(start="2024", end="2025").date)  # type: ignore
 data_with_new_features["is_holiday"] = data_with_new_features["transaction_date"].isin(
     holidays
 )
@@ -338,10 +338,13 @@ y = data_for_model[target_feature]
 
 # one-hot encode
 X = pd.get_dummies(X)
+print(X.columns)
 
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.33, random_state=80
 )
+
+
 
 # %% 8.2 Decision Tree
 from sklearn.tree import DecisionTreeRegressor  # noqa: E402
@@ -434,6 +437,13 @@ print(f"{'Random Forest':<25} {9.82:>10.2f} {17.04:>10.2f} {0.40:>10.2f}")
 print(f"{'Hist Gradient Boosting':<25} {9.64:>10.2f} {15.99:>10.2f} {0.47:>10.2f}")
 print("=" * 60)
 
+# %% Save the Best Model (For Now)
+
+import pickle  # noqa: E402
+
+with open("taxi_regression_model.pkl", "wb") as file:
+    pickle.dump(model_at_hand, file)
+
 # %% 9. Tuning
 # %% 9.1 Find Best Parameters
 # Will do these. They take time!
@@ -505,3 +515,9 @@ print(confusion_matrix(y_test_c, y_pred_c))
 print("accuracy", accuracy_score(y_test_c, y_pred_c))
 print("precision", precision_score(y_test_c, y_pred_c))
 print("recall", recall_score(y_test_c, y_pred_c))
+# %% Save Classification Model
+
+import pickle  # noqa: E402
+
+with open("taxi_classification_model.pkl", "wb") as file:
+    pickle.dump(clf, file)
