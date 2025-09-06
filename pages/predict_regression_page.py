@@ -1,8 +1,9 @@
 import datetime
 import pickle
+
+import numpy as np
 import pandas as pd
 import streamlit as st
-import numpy as np
 from sklearn.ensemble import HistGradientBoostingRegressor
 
 st.set_page_config(page_title="NYC Taxi Model | Fare Regression Model")

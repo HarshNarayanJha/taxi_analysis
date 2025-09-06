@@ -73,7 +73,9 @@ Two things to deal with: -ve values and outliers (very high values)
 
 # %%
 print(taxi_data[taxi_data["total_amount"] < 0].shape)
-taxi_data[taxi_data["total_amount"] < 0].reset_index().plot(kind="scatter", y="total_amount", x="index", figsize=(10, 5))
+taxi_data[taxi_data["total_amount"] < 0].reset_index().plot(
+    kind="scatter", y="total_amount", x="index", figsize=(10, 5)
+)
 
 # %%
 print(taxi_data[taxi_data["total_amount"] < 0].head())
@@ -92,7 +94,9 @@ print(taxi_data[taxi_data["total_amount"] == 0]["payment_type"].value_counts()) 
 taxi_data[taxi_data["total_amount"] == 0]["trip_distance"].hist(  # type: ignore
     figsize=(10, 5), bins=60
 )
-taxi_data[taxi_data["total_amount"] == 0].reset_index().plot(kind="scatter", y="total_amount", x="index", figsize=(10, 5))
+taxi_data[taxi_data["total_amount"] == 0].reset_index().plot(
+    kind="scatter", y="total_amount", x="index", figsize=(10, 5)
+)
 
 # %% [markdown]
 """
@@ -215,7 +219,9 @@ Now it's a good time to think about what we want to predict. We need to transfor
 # %%
 
 taxi_grouped_by_region = main_taxi_df.groupby(categorical_columns).mean().reset_index()
-taxi_grouped_by_region["count_of_transactions"] = main_taxi_df.groupby(categorical_columns).count().reset_index()["total_amount"]
+taxi_grouped_by_region["count_of_transactions"] = (
+    main_taxi_df.groupby(categorical_columns).count().reset_index()["total_amount"]
+)
 print(taxi_grouped_by_region.shape)
 taxi_grouped_by_region.head()
 
@@ -297,7 +303,9 @@ data_with_new_features: pd.DataFrame = taxi_grouped_by_region.copy()
 
 # %% 7.1 Date-related features
 data_with_new_features["transaction_week_day"] = data_with_new_features["transaction_date"].dt.weekday
-data_with_new_features["weekend"] = data_with_new_features["transaction_week_day"].apply(lambda x: True if x in (5, 6) else False)
+data_with_new_features["weekend"] = data_with_new_features["transaction_week_day"].apply(
+    lambda x: True if x in (5, 6) else False
+)
 
 # %%
 
@@ -322,7 +330,9 @@ zone_lookup["LocationID"] = zone_lookup["LocationID"].astype(str)
 zone_lookup.head()
 
 # %%
-data_with_new_features = data_with_new_features.merge(zone_lookup, left_on="PULocationID", right_on="LocationID", how="left")
+data_with_new_features = data_with_new_features.merge(
+    zone_lookup, left_on="PULocationID", right_on="LocationID", how="left"
+)
 data_with_new_features.drop("LocationID", axis=1, inplace=True)
 data_with_new_features.head()
 

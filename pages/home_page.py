@@ -11,7 +11,7 @@ classification_page = st.Page(
     url_path="classification",
 )
 
-if __name__ == "__page__":
+if __name__ == "__main__":
     st.set_page_config(page_title="NYC Taxi Model")
 
     st.title("NYC Taxi Fare ML Project")
